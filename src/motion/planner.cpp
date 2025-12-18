@@ -1,18 +1,18 @@
 #include "planner.h"
 #include <math.h>
 
-Planner::Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics)
-    : _stepperA(stepperA), _stepperB(stepperB), _converterA(converterA), _converterB(converterB), _kinematics(kinematics) {}
+Planner::Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state)
+    : _stepperA(stepperA), _stepperB(stepperB), _converterA(converterA), _converterB(converterB), _kinematics(kinematics), _state(state) {}
 
 void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
-    float deltaX = x_mm - _curX_mm;
-    float deltaY = y_mm - _curY_mm;
+    float deltaX = x_mm - _state->getX();
+    float deltaY = y_mm - _state->getY();
 
     if (deltaX == 0 && deltaY == 0) return; // no movement needed
 
-    // Convert positions to steps using converters
-    long currentX_steps = _converterA->mmToSteps(_curX_mm);
-    long currentY_steps = _converterB->mmToSteps(_curY_mm);
+    // Convert current and target positions to steps using converters
+    long currentX_steps = _converterA->mmToSteps(_state->getX());
+    long currentY_steps = _converterB->mmToSteps(_state->getY());
     long targetX_steps = _converterA->mmToSteps(x_mm);
     long targetY_steps = _converterB->mmToSteps(y_mm);
 
@@ -68,6 +68,5 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
     }
 
     // Update current position
-    _curX_mm = x_mm;
-    _curY_mm = y_mm;
+    _state->setPosition(x_mm, y_mm);
 }

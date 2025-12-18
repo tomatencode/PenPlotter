@@ -3,6 +3,7 @@
 #include "motion/stepper.h"
 #include "motion/planner.h"
 #include "motion/step_converter.h"
+#include "motion/MotionState.h"
 
 // === Pins and driver ===
 #define STEP_PIN_A 19
@@ -24,7 +25,8 @@ Stepper stepB(STEP_PIN_B, DIR_PIN_B);
 StepConverter converterA(320.0f, &driverA);
 StepConverter converterB(320.0f, &driverB);
 CoreXY kinematics;
-Planner planner(&stepA, &stepB, &converterA, &converterB, &kinematics);
+MotionState state;
+Planner planner(&stepA, &stepB, &converterA, &converterB, &kinematics, &state);
 
 float squareSize_mm = 2.0;
 float speed_mm_per_s = 0.3;
@@ -43,7 +45,7 @@ void setup() {
     // === INIT DRIVER A ===
     driverA.begin();
     driverA.toff(5);
-    driverA.rms_current(800);
+    driverA.rms_current(1000);
     driverA.microsteps(16);
     driverA.en_spreadCycle(false);
     driverA.pwm_autoscale(true);
@@ -51,7 +53,7 @@ void setup() {
     // === INIT DRIVER B ===
     driverB.begin();
     driverB.toff(5);
-    driverB.rms_current(800);
+    driverB.rms_current(1000);
     driverB.microsteps(16);
     driverB.en_spreadCycle(false);
     driverB.pwm_autoscale(true);

@@ -3,10 +3,11 @@
 #include "stepper.h"
 #include "corexy_kinematics.h"
 #include "step_converter.h"
+#include "MotionState.h"
 
 class Planner {
 public:
-    Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics);
+    Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state);
 
     void moveTo(float x_mm, float y_mm, float speed_mm_per_sec);
 
@@ -16,7 +17,5 @@ private:
     StepConverter* _converterA;
     StepConverter* _converterB;
     CoreXY* _kinematics;
-
-    float _curX_mm = 0;
-    float _curY_mm = 0;
+    MotionState* _state;
 };

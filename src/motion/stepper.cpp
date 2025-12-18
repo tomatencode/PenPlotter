@@ -9,6 +9,6 @@ void Stepper::setDirection(bool dir) { digitalWrite(_dirPin, dir ? HIGH : LOW); 
 
 void Stepper::step() {
     digitalWrite(_stepPin, HIGH);
-    delayMicroseconds(2);
+    delayMicroseconds(5);
     digitalWrite(_stepPin, LOW);
 }
