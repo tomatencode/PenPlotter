@@ -10,7 +10,7 @@ CoreXYCoords CoreXY::toCoreXY(float x, float y) const {
     c.B = lround(x - y);
     return c;
 }
-CartesianCoords CoreXY::toCartesian(long A, long B) const {
+CartesianCoords CoreXY::toCartesian(float A, float B) const {
 
     CartesianCoords c;
     c.x = (A + B) * 0.5f;

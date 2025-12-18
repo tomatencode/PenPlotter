@@ -2,8 +2,8 @@
 #include <Arduino.h>
 
 struct CoreXYCoords {
-    long A;
-    long B;
+    float A;
+    float B;
 };
 struct CartesianCoords {
     float x;
@@ -15,5 +15,5 @@ public:
     CoreXY();
 
     CoreXYCoords toCoreXY(float x, float y) const;
-    CartesianCoords toCartesian(long A, long B) const;
+    CartesianCoords toCartesian(float A, float B) const;
 };
