@@ -4,12 +4,10 @@
 
 class Stepper {
 public:
-    Stepper(uint8_t stepPin, uint8_t dirPin, TMC2209Stepper* driver);
+    Stepper(uint8_t stepPin, uint8_t dirPin);
 
     void enable();
     void disable();
-    void setCurrent(float mA);
-    void setMicrosteps(int ms);
     void setDirection(bool dir);
     void step();
 

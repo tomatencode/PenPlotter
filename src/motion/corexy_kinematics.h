@@ -6,17 +6,14 @@ struct CoreXYCoords {
     long B;
 };
 struct CartesianCoords {
-    float x_mm;
-    float y_mm;
+    float x;
+    float y;
 };
 
 class CoreXY {
 public:
-    CoreXY(float stepsPerMM);
+    CoreXY();
 
-    CoreXYCoords toCoreXY(float x_mm, float y_mm) const;
-    CartesianCoords toCartesian(long A_steps, long B_steps) const;
-
-private:
-    float _stepsPerMM;
+    CoreXYCoords toCoreXY(float x, float y) const;
+    CartesianCoords toCartesian(long A, long B) const;
 };

@@ -1,8 +1,8 @@
 #include "planner.h"
 #include <math.h>
 
-Planner::Planner(Stepper* stepperA, Stepper* stepperB, CoreXY* kinematics)
-    : _stepperA(stepperA), _stepperB(stepperB), _kinematics(kinematics) {}
+Planner::Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics)
+    : _stepperA(stepperA), _stepperB(stepperB), _converterA(converterA), _converterB(converterB), _kinematics(kinematics) {}
 
 void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
     float deltaX = x_mm - _curX_mm;
@@ -10,9 +10,15 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
 
     if (deltaX == 0 && deltaY == 0) return; // no movement needed
 
-    // Get current and target motor steps
-    CoreXYCoords currentSteps = _kinematics->toCoreXY(_curX_mm, _curY_mm);
-    CoreXYCoords targetSteps = _kinematics->toCoreXY(x_mm, y_mm);
+    // Convert positions to steps using converters
+    long currentX_steps = _converterA->mmToSteps(_curX_mm);
+    long currentY_steps = _converterB->mmToSteps(_curY_mm);
+    long targetX_steps = _converterA->mmToSteps(x_mm);
+    long targetY_steps = _converterB->mmToSteps(y_mm);
+
+    // Get current and target motor steps using kinematics
+    CoreXYCoords currentSteps = _kinematics->toCoreXY(currentX_steps, currentY_steps);
+    CoreXYCoords targetSteps = _kinematics->toCoreXY(targetX_steps, targetY_steps);
 
     long deltaA = targetSteps.A - currentSteps.A;
     long deltaB = targetSteps.B - currentSteps.B;
@@ -34,11 +40,11 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
     // set directions
     _stepperA->setDirection(dirA);
     _stepperB->setDirection(dirB);
+    Serial.print("dirA: "); Serial.print(dirA); Serial.print(" dirB: "); Serial.println(dirB);
 
     // Step counters
     long stepCountA = 0;
     long stepCountB = 0;
-    Serial.print("stepsA: "); Serial.print(stepsA); Serial.print(" stepsB: "); Serial.println(stepsB);
     unsigned long lastStepTime = micros();
     long step = 0;
 
@@ -60,9 +66,6 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
             step++;
         }
     }
-
-    Serial.print("Moved to ("); Serial.print(x_mm); Serial.print(", "); Serial.print(y_mm); Serial.println(")");
-    Serial.print("Final Steps A: "); Serial.print(stepCountA); Serial.print(" B: "); Serial.println(stepCountB);
 
     // Update current position
     _curX_mm = x_mm;
