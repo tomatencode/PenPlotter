@@ -47,6 +47,10 @@ void setup() {
 
     digitalWrite(EN_PIN, LOW);
 
+    // muteBuzzer
+    pinMode(14, OUTPUT);
+    digitalWrite(14, LOW);
+
     driverSerial.begin(115200, SERIAL_8N1, DRIVER_RX_PIN, DRIVER_TX_PIN);
     // === INIT DRIVER A ===
     driverA.begin();
