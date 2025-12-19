@@ -10,18 +10,18 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
 
     if (deltaX == 0 && deltaY == 0) return; // no movement needed
 
+    // Get current and target positions in CoreXY coordinates
+    CoreXYCoords currentCoords = _kinematics->toCoreXY(_state->getX(), _state->getY());
+    CoreXYCoords targetCoords = _kinematics->toCoreXY(x_mm, y_mm);
+
     // Convert current and target positions to steps using converters
-    long currentX_steps = _converterA->mmToSteps(_state->getX());
-    long currentY_steps = _converterB->mmToSteps(_state->getY());
-    long targetX_steps = _converterA->mmToSteps(x_mm);
-    long targetY_steps = _converterB->mmToSteps(y_mm);
+    long currentA_steps = _converterA->mmToSteps(currentCoords.A);
+    long currentB_steps = _converterB->mmToSteps(currentCoords.B);
+    long targetA_steps = _converterA->mmToSteps(targetCoords.A);
+    long targetB_steps = _converterB->mmToSteps(targetCoords.B);
 
-    // Get current and target motor steps using kinematics
-    CoreXYCoords currentSteps = _kinematics->toCoreXY(currentX_steps, currentY_steps);
-    CoreXYCoords targetSteps = _kinematics->toCoreXY(targetX_steps, targetY_steps);
-
-    long deltaA = targetSteps.A - currentSteps.A;
-    long deltaB = targetSteps.B - currentSteps.B;
+    long deltaA = targetA_steps - currentA_steps;
+    long deltaB = targetB_steps - currentB_steps;
 
     // Determine directions and absolute steps
     bool dirA = deltaA >= 0;
