@@ -4,7 +4,7 @@
 Planner::Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state)
     : _stepperA(stepperA), _stepperB(stepperB), _converterA(converterA), _converterB(converterB), _kinematics(kinematics), _state(state) {}
 
-void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
+void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_min) {
     float deltaX = x_mm - _state->getX();
     float deltaY = y_mm - _state->getY();
 
@@ -34,7 +34,7 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_sec) {
 
     // Calculate timing
     float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
-    float time_sec = distance / speed_mm_per_sec;
+    float time_sec = distance * 60.0f / speed_mm_per_min;
     unsigned long stepInterval_us = (unsigned long)((time_sec * 1000000.0f) / totalSteps);
 
     // set directions

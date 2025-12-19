@@ -9,7 +9,7 @@ class Planner {
 public:
     Planner(Stepper* stepperA, Stepper* stepperB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state);
 
-    void moveTo(float x_mm, float y_mm, float speed_mm_per_sec);
+    void moveTo(float x_mm, float y_mm, float speed_mm_per_min);
 
 private:
     Stepper* _stepperA;

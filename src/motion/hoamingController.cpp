@@ -3,7 +3,7 @@
 HomingController::HomingController(Stepper* stepperA, Stepper* stepperB, TMC2209Stepper* driverA, TMC2209Stepper* driverB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state)
     : _stepperA(stepperA), _stepperB(stepperB), _driverA(driverA), _driverB(driverB), _converterA(converterA), _converterB(converterB), _kinematics(kinematics), _state(state) {}
 
-void HomingController::findLimit(Direction direction, float speed_mm_per_sec, float stallGuard_threshold) {
+void HomingController::findLimit(Direction direction, float speed_mm_per_min, float stallGuard_threshold) {
     // Determine direction vectors
     float deltaX = 0.0f;
     float deltaY = 0.0f;
@@ -44,7 +44,7 @@ void HomingController::findLimit(Direction direction, float speed_mm_per_sec, fl
 
     // Calculate step interval for continuous stepping
     long stepsPerMM = _converterA->mmToSteps(1.0f);  // Approximate
-    float time_per_mm = 1.0f / speed_mm_per_sec;
+    float time_per_mm = 60.0f / speed_mm_per_min;  // speed_mm_per_min is in mm/min
     unsigned long stepInterval_us = (unsigned long)(time_per_mm * 1000000.0f / stepsPerMM);
 
     unsigned long lastStepTime = micros();
@@ -77,7 +77,7 @@ void HomingController::findLimit(Direction direction, float speed_mm_per_sec, fl
                     break;
                 }
             }
-
+            
             lastStepTime = currentTime;
         }
     }

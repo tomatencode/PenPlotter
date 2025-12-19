@@ -17,7 +17,7 @@ class HomingController {
 public:
     HomingController(Stepper* stepperA, Stepper* stepperB, TMC2209Stepper* driverA, TMC2209Stepper* driverB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state);
 
-    void findLimit(Direction direction, float speed_mm_per_sec, float stallGuard_threshold);
+    void findLimit(Direction direction, float speed_mm_per_min, float stallGuard_threshold);
 
 private:
     Stepper* _stepperA;

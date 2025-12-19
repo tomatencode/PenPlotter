@@ -31,7 +31,7 @@ Planner planner(&stepA, &stepB, &converterA, &converterB, &kinematics, &state);
 HomingController homing(&stepA, &stepB, &driverA, &driverB, &converterA, &converterB, &kinematics, &state);
 
 float stallGuard_threshold = 30.0f;
-float speed_mm_per_s = 0.3;
+float speed_mm_per_min = 500;
 
 void setup() {
     Serial.begin(115200);
@@ -64,22 +64,22 @@ void setup() {
 void loop() {
     // Homing sequence to find workspace dimensions
     Serial.println("Homing to RIGHT...");
-    homing.findLimit(RIGHT, speed_mm_per_s, stallGuard_threshold);
+    homing.findLimit(RIGHT, speed_mm_per_min, stallGuard_threshold);
     float maxX = state.getX();
     Serial.print("Max X: "); Serial.println(maxX);
 
     Serial.println("Homing to LEFT...");
-    homing.findLimit(LEFT, speed_mm_per_s, stallGuard_threshold);
+    homing.findLimit(LEFT, speed_mm_per_min, stallGuard_threshold);
     float minX = state.getX();
     Serial.print("Min X: "); Serial.println(minX);
 
     Serial.println("Homing to UP...");
-    homing.findLimit(UP, speed_mm_per_s, stallGuard_threshold);
+    homing.findLimit(UP, speed_mm_per_min, stallGuard_threshold);
     float maxY = state.getY();
     Serial.print("Max Y: "); Serial.println(maxY);
 
     Serial.println("Homing to DOWN...");
-    homing.findLimit(DOWN, speed_mm_per_s, stallGuard_threshold);
+    homing.findLimit(DOWN, speed_mm_per_min, stallGuard_threshold);
     float minY = state.getY();
     Serial.print("Min Y: "); Serial.println(minY);
 
@@ -105,9 +105,9 @@ void loop() {
     Serial.println("Starting rectangle tracing...");
 
     while (true) {
-        planner.moveTo(blX, blY, speed_mm_per_s);
-        planner.moveTo(brX, brY, speed_mm_per_s);
-        planner.moveTo(trX, trY, speed_mm_per_s);
-        planner.moveTo(tlX, tlY, speed_mm_per_s);
+        planner.moveTo(blX, blY, speed_mm_per_min);
+        planner.moveTo(brX, brY, speed_mm_per_min);
+        planner.moveTo(trX, trY, speed_mm_per_min);
+        planner.moveTo(tlX, tlY, speed_mm_per_min);
     }
 }
