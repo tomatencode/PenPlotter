@@ -6,6 +6,10 @@
 #include "motion/MotionState.h"
 #include "motion/hoamingController.h"
 
+// === Workspace dimensions ===
+#define maxX_mm 185.0f
+#define maxY_mm 265.0f
+
 // === Pins and driver ===
 #define STEP_PIN_A 19
 #define DIR_PIN_A 4
@@ -23,15 +27,15 @@ TMC2209Stepper driverA(&driverSerial, R_SENSE, 0);
 TMC2209Stepper driverB(&driverSerial, R_SENSE, 2);
 Stepper stepA(STEP_PIN_A, DIR_PIN_A);
 Stepper stepB(STEP_PIN_B, DIR_PIN_B);
-StepConverter converterA(320.0f, &driverA);
-StepConverter converterB(320.0f, &driverB);
+StepConverter converterA(0.2f, &driverA);
+StepConverter converterB(0.2f, &driverB);
 CoreXY kinematics;
 MotionState state;
 Planner planner(&stepA, &stepB, &converterA, &converterB, &kinematics, &state);
 HomingController homing(&stepA, &stepB, &driverA, &driverB, &kinematics);
 
 float stallGuard_threshold = 50.0f;
-float speed_mm_per_min = 500;
+float speed_mm_per_min = 1600;
 
 void setup() {
     Serial.begin(115200);
@@ -65,15 +69,25 @@ void loop() {
     // Homing sequence to find workspace dimensions
     Serial.println("Homing to RIGHT...");
     homing.moveToLimit(LEFT, 300, stallGuard_threshold);
-    float maxX = state.getX();
-    Serial.print("Max X: "); Serial.println(maxX);
 
     Serial.println("Homing to DOWN...");
     homing.moveToLimit(DOWN, 300, stallGuard_threshold);
-    float minY = state.getY();
-    Serial.print("Min Y: "); Serial.println(minY);
+
+    planner.moveTo(0, 10, speed_mm_per_min);
+
+    state.setPosition(0, 0);
 
     while (true) {
+        Serial.println("Moving to bottom-right corner...");
+        planner.moveTo(maxX_mm, 0, speed_mm_per_min);
 
+        Serial.println("Moving to top-right corner...");
+        planner.moveTo(maxX_mm, maxY_mm, speed_mm_per_min);
+
+        Serial.println("Moving to top-left corner...");
+        planner.moveTo(0, maxY_mm, speed_mm_per_min);
+
+        Serial.println("Moving to bottom-left corner...");
+        planner.moveTo(0, 0, speed_mm_per_min);
     }
 }

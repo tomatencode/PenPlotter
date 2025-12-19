@@ -24,8 +24,8 @@ void Planner::moveTo(float x_mm, float y_mm, float speed_mm_per_min) {
     long deltaB = targetB_steps - currentB_steps;
 
     // Determine directions and absolute steps
-    bool dirA = deltaA >= 0;
-    bool dirB = deltaB >= 0;
+    bool dirA = deltaA < 0;
+    bool dirB = deltaB < 0;
     long stepsA = abs(deltaA);
     long stepsB = abs(deltaB);
 
