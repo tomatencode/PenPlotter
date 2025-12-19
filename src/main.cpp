@@ -28,9 +28,9 @@ StepConverter converterB(320.0f, &driverB);
 CoreXY kinematics;
 MotionState state;
 Planner planner(&stepA, &stepB, &converterA, &converterB, &kinematics, &state);
-HomingController homing(&stepA, &stepB, &driverA, &driverB, &converterA, &converterB, &kinematics, &state);
+HomingController homing(&stepA, &stepB, &driverA, &driverB, &kinematics);
 
-float stallGuard_threshold = 30.0f;
+float stallGuard_threshold = 50.0f;
 float speed_mm_per_min = 500;
 
 void setup() {
@@ -64,50 +64,16 @@ void setup() {
 void loop() {
     // Homing sequence to find workspace dimensions
     Serial.println("Homing to RIGHT...");
-    homing.findLimit(RIGHT, speed_mm_per_min, stallGuard_threshold);
+    homing.moveToLimit(LEFT, 300, stallGuard_threshold);
     float maxX = state.getX();
     Serial.print("Max X: "); Serial.println(maxX);
 
-    Serial.println("Homing to LEFT...");
-    homing.findLimit(LEFT, speed_mm_per_min, stallGuard_threshold);
-    float minX = state.getX();
-    Serial.print("Min X: "); Serial.println(minX);
-
-    Serial.println("Homing to UP...");
-    homing.findLimit(UP, speed_mm_per_min, stallGuard_threshold);
-    float maxY = state.getY();
-    Serial.print("Max Y: "); Serial.println(maxY);
-
     Serial.println("Homing to DOWN...");
-    homing.findLimit(DOWN, speed_mm_per_min, stallGuard_threshold);
+    homing.moveToLimit(DOWN, 300, stallGuard_threshold);
     float minY = state.getY();
     Serial.print("Min Y: "); Serial.println(minY);
 
-    float width = maxX - minX;
-    float height = maxY - minY;
-    Serial.print("Workspace Width: "); Serial.print(width); Serial.print(" Height: "); Serial.println(height);
-
-    // Calculate center rectangle (80% size, same aspect ratio)
-    float rectWidth = width * 0.8;
-    float rectHeight = height * 0.8;
-    float centerX = (maxX + minX) / 2.0;
-    float centerY = (maxY + minY) / 2.0;
-
-    float blX = centerX - rectWidth / 2.0;
-    float blY = centerY - rectHeight / 2.0;
-    float brX = centerX + rectWidth / 2.0;
-    float brY = centerY - rectHeight / 2.0;
-    float trX = centerX + rectWidth / 2.0;
-    float trY = centerY + rectHeight / 2.0;
-    float tlX = centerX - rectWidth / 2.0;
-    float tlY = centerY + rectHeight / 2.0;
-
-    Serial.println("Starting rectangle tracing...");
-
     while (true) {
-        planner.moveTo(blX, blY, speed_mm_per_min);
-        planner.moveTo(brX, brY, speed_mm_per_min);
-        planner.moveTo(trX, trY, speed_mm_per_min);
-        planner.moveTo(tlX, tlY, speed_mm_per_min);
+
     }
 }

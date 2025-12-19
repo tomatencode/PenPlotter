@@ -15,17 +15,14 @@ enum Direction {
 
 class HomingController {
 public:
-    HomingController(Stepper* stepperA, Stepper* stepperB, TMC2209Stepper* driverA, TMC2209Stepper* driverB, StepConverter* converterA, StepConverter* converterB, CoreXY* kinematics, MotionState* state);
+    HomingController(Stepper* stepperA, Stepper* stepperB, TMC2209Stepper* driverA, TMC2209Stepper* driverB, CoreXY* kinematics);
 
-    void findLimit(Direction direction, float speed_mm_per_min, float stallGuard_threshold);
+    void moveToLimit(Direction direction, float speed_full_stps_per_s, float stallGuard_threshold);
 
 private:
     Stepper* _stepperA;
     Stepper* _stepperB;
     TMC2209Stepper* _driverA;
     TMC2209Stepper* _driverB;
-    StepConverter* _converterA;
-    StepConverter* _converterB;
     CoreXY* _kinematics;
-    MotionState* _state;
 };
