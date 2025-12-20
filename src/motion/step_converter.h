@@ -1,3 +1,4 @@
+// C++ header names should have extensions hpp
 #pragma once
 #include <TMCStepper.h>
 
